@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Sign In — Cargo Booker Pro{% endblock %}
+
+{% block content %}
+<div style="min-height:80vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem;">
+  <div style="width:100%;max-width:400px;">
+
+    <div style="text-align:center;margin-bottom:2rem;">
+      <div style="font-size:2.5rem;margin-bottom:.5rem;">📦</div>
+      <h1 style="font-size:1.6rem;font-weight:700;color:#18181b;margin-bottom:.25rem;">Welcome back</h1>
+      <p style="color:#71717a;font-size:.95rem;">Sign in to manage your shipments.</p>
+    </div>
+
+    <div style="background:#fff;border:1px solid #e4e4e7;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.06);padding:2rem;">
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        <div style="margin-bottom:1rem;">
+          <label style="display:block;font-size:.8rem;font-weight:600;color:#52525b;margin-bottom:.35rem;">Username</label>
+          <input type="text" name="username" placeholder="Your username" autofocus
+                 style="width:100%;padding:.6rem .85rem;border:1.5px solid #e4e4e7;border-radius:8px;font-size:.9rem;color:#18181b;background:#fff;outline:none;"
+                 onfocus="this.style.borderColor='#18181b'" onblur="this.style.borderColor='#e4e4e7'">
+        </div>
+
+        <div style="margin-bottom:1.5rem;">
+          <label style="display:block;font-size:.8rem;font-weight:600;color:#52525b;margin-bottom:.35rem;">Password</label>
+          <input type="password" name="password" placeholder="••••••••"
+                 style="width:100%;padding:.6rem .85rem;border:1.5px solid #e4e4e7;border-radius:8px;font-size:.9rem;color:#18181b;background:#fff;outline:none;"
+                 onfocus="this.style.borderColor='#18181b'" onblur="this.style.borderColor='#e4e4e7'">
+        </div>
+
+        {% if form.non_field_errors %}
+          <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;">
+            {% for e in form.non_field_errors %}<p style="color:#dc2626;font-size:.85rem;margin:0;">{{ e }}</p>{% endfor %}
+          </div>
+        {% endif %}
+
+        <button type="submit"
+                style="width:100%;padding:.75rem;background:#18181b;color:#fff;border:none;border-radius:8px;font-size:.95rem;font-weight:600;cursor:pointer;"
+                onmouseover="this.style.background='#3f3f46'" onmouseout="this.style.background='#18181b'">
+          Sign In →
+        </button>
+      </form>
+    </div>
+
+    <p style="text-align:center;margin-top:1.25rem;font-size:.9rem;color:#71717a;">
+      Don't have an account?
+      <a href="{% url 'register' %}" style="color:#18181b;font-weight:600;text-decoration:none;">Sign up free</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - Cargo Booker Pro{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Profile Card -->
+        <div class="md:col-span-1">
+            <div class="bg-white dark:bg-slate-900 rounded-xl shadow-lg p-8 border border-slate-200 dark:border-slate-800">
+                <div class="text-center">
+                    <div class="w-24 h-24 mx-auto bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mb-6 text-4xl">
+                        👤
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">{{ user.first_name }} {{ user.last_name }}</h2>
+                    <p class="text-slate-600 dark:text-slate-400 mb-4">@{{ user.username }}</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-500 mb-6">{{ user.email }}</p>
+                    <div class="space-y-2">
+                        <p class="text-sm text-slate-600 dark:text-slate-400"><strong>Member since:</strong> {{ user.date_joined|date:"M Y" }}</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-400"><strong>Last login:</strong> {{ user.last_login|date:"M d, Y H:i" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats & Info -->
+        <div class="md:col-span-2 space-y-8">
+            <!-- Account Stats -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950 dark:to-emerald-900 rounded-xl p-6 border border-emerald-200 dark:border-emerald-800">
+                    <p class="text-sm text-slate-600 dark:text-slate-400 font-semibold uppercase">Total Shipments</p>
+                    <p class="text-3xl font-bold text-emerald-600 dark:text-emerald-400">{{ stats.total }}</p>
+                </div>
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
+                    <p class="text-sm text-slate-600 dark:text-slate-400 font-semibold uppercase">Delivered</p>
+                    <p class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ stats.delivered }}</p>
+                </div>
+                <div class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900 rounded-xl p-6 border border-purple-200 dark:border-purple-800">
+                    <p class="text-sm text-slate-600 dark:text-slate-400 font-semibold uppercase">Total Spent</p>
+                    <p class="text-3xl font-bold text-purple-600 dark:text-purple-400">${{ stats.total_spent|floatformat:2 }}</p>
+                </div>
+                <div class="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900 rounded-xl p-6 border border-orange-200 dark:border-orange-800">
+                    <p class="text-sm text-slate-600 dark:text-slate-400 font-semibold uppercase">Total Weight</p>
+                    <p class="text-3xl font-bold text-orange-600 dark:text-orange-400">{{ stats.weight|floatformat:0 }}kg</p>
+                </div>
+            </div>
+
+            <!-- Profile Information -->
+            <div class="bg-white dark:bg-slate-900 rounded-xl shadow-lg p-8 border border-slate-200 dark:border-slate-800">
+                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-3">
+                    <span class="text-2xl">👤</span> Account Information
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">First Name</label>
+                        <p class="text-slate-600 dark:text-slate-400">{{ user.first_name }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Last Name</label>
+                        <p class="text-slate-600 dark:text-slate-400">{{ user.last_name }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Email</label>
+                        <p class="text-slate-600 dark:text-slate-400">{{ user.email }}</p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
+                        <a href="{% url 'logout' %}" class="inline-block px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-all duration-300">Logout</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Shipments -->
+            <div class="bg-white dark:bg-slate-900 rounded-xl shadow-lg p-8 border border-slate-200 dark:border-slate-800">
+                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-3">
+                    <span class="text-2xl">📦</span> Recent Shipments
+                </h3>
+                {% if recent_shipments %}
+                    <div class="space-y-3">
+                        {% for shipment in recent_shipments %}
+                            <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:shadow-md transition-shadow">
+                                <div class="flex-1">
+                                    <p class="font-semibold text-slate-900 dark:text-white">{{ shipment.tracking_number }}</p>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">{{ shipment.sender_city }} → {{ shipment.receiver_city }}</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="status-badge status-{{ shipment.status }}">{{ shipment.get_status_display }}</span>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">${{ shipment.total_price|floatformat:2 }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="mt-6">
+                        <a href="{% url 'dashboard' %}" class="inline-block px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold transition-all duration-300">View All Shipments →</a>
+                    </div>
+                {% else %}
+                    <p class="text-slate-600 dark:text-slate-400">No shipments yet. <a href="{% url 'book_shipment' %}" class="text-emerald-600 dark:text-emerald-400 hover:underline">Book one now!</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

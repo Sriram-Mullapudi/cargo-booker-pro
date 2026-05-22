@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cargo Booker Pro{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script>
+        // Dark mode initialization
+        (function initDarkMode() {
+            const darkMode = localStorage.getItem('darkMode');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (darkMode === 'true' || (darkMode === null && prefersDark)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+</head>
+<body class="transition-colors duration-300">
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0">
+                    <a href="{% url 'index' %}" class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 transition-colors">📦 Cargo Booker</a>
+                </div>
+                <div class="flex items-center gap-6">
+                    {% if user.is_authenticated %}
+                        <span class="text-sm text-slate-600 dark:text-slate-300">Welcome, <span class="font-semibold">{{ user.first_name|default:user.username }}</span>!</span>
+                        <div class="flex gap-4">
+                            <a href="{% url 'dashboard' %}" class="text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors font-medium">Dashboard</a>
+                            <a href="{% url 'book_shipment' %}" class="text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors font-medium">Book</a>
+                            <a href="{% url 'profile' %}" class="text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors font-medium">Profile</a>
+                            <button id="darkModeToggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">🌙</button>
+                            <a href="{% url 'logout' %}" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium">Logout</a>
+                        </div>
+                    {% else %}
+                        <div class="flex gap-4">
+                            <a href="{% url 'login' %}" class="text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors font-medium">Login</a>
+                            <a href="{% url 'register' %}" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors font-medium">Register</a>
+                            <button id="darkModeToggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">🌙</button>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 space-y-2" id="messagesContainer">
+            {% for message in messages %}
+                <div class="alert-{{ message.tags }} animate-slide-in" role="alert">
+                    <div class="flex items-center gap-3 p-4 rounded-lg {% if message.tags == 'success' %}bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800{% elif message.tags == 'error' %}bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800{% else %}bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800{% endif %}">
+                        {% if message.tags == 'success' %}
+                            <span class="text-2xl">✓</span>
+                            <p class="text-emerald-800 dark:text-emerald-200 font-medium">{{ message }}</p>
+                        {% elif message.tags == 'error' %}
+                            <span class="text-2xl">✕</span>
+                            <p class="text-red-800 dark:text-red-200 font-medium">{{ message }}</p>
+                        {% else %}
+                            <span class="text-2xl">ℹ</span>
+                            <p class="text-blue-800 dark:text-blue-200 font-medium">{{ message }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="min-h-[calc(100vh-120px)] bg-slate-50 dark:bg-slate-900 transition-colors">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 mt-16 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="text-lg font-bold text-emerald-600 dark:text-emerald-400 mb-4">📦 Cargo Booker</h3>
+                    <p class="text-slate-600 dark:text-slate-400">Fast, reliable, and affordable cargo shipping solutions.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-slate-900 dark:text-white mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-slate-600 dark:text-slate-400">
+                        <li><a href="{% url 'index' %}" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Home</a></li>
+                        <li><a href="{% url 'track' %}" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Track Shipment</a></li>
+                        {% if user.is_authenticated %}<li><a href="{% url 'dashboard' %}" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Dashboard</a></li>{% endif %}
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-slate-900 dark:text-white mb-4">Support</h4>
+                    <p class="text-slate-600 dark:text-slate-400">📧 support@cargobooker.com</p>
+                    <p class="text-slate-600 dark:text-slate-400">📱 +1-800-CARGO-PRO</p>
+                </div>
+            </div>
+            <div class="border-t border-slate-200 dark:border-slate-800 pt-8 text-center text-slate-600 dark:text-slate-400">
+                <p>&copy; 2026 Cargo Booker Pro. All rights reserved. | <a href="#" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Privacy Policy</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

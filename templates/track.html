@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+
+{% block title %}Track Shipment - Cargo Booker Pro{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Track Your Shipment</h1>
+        <p>Enter your tracking number to see real-time updates</p>
+    </div>
+
+    <!-- Tracking Form -->
+    <div class="tracking-search">
+        <form method="get" class="tracking-form">
+            <input 
+                type="text" 
+                name="tracking" 
+                placeholder="Enter tracking number (e.g., CBP1A2B3C4D)" 
+                class="form-input tracking-input"
+                value="{{ tracking_number }}"
+                autofocus
+            >
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
+
+    {% if shipment %}
+        <!-- Shipment Found -->
+        <div class="tracking-details">
+            <div class="detail-card">
+                <h2>Shipment Details</h2>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <label>Tracking Number</label>
+                        <div class="value">{{ shipment.tracking_number }}</div>
+                    </div>
+                    <div class="detail-item">
+                        <label>Status</label>
+                        <div class="value"><span class="status-badge status-{{ shipment.status }}">{{ shipment.get_status_display }}</span></div>
+                    </div>
+                    <div class="detail-item">
+                        <label>From</label>
+                        <div class="value">{{ shipment.sender_city }}, {{ shipment.sender_address|truncatewords:3 }}</div>
+                    </div>
+                    <div class="detail-item">
+                        <label>To</label>
+                        <div class="value">{{ shipment.receiver_city }}, {{ shipment.receiver_address|truncatewords:3 }}</div>
+                    </div>
+                    <div class="detail-item">
+                        <label>Weight</label>
+                        <div class="value">{{ shipment.weight_kg }} kg</div>
+                    </div>
+                    <div class="detail-item">
+                        <label>Cargo Type</label>
+                        <div class="value">{{ shipment.get_cargo_type_display }}</div>
+                    </div>
+                    <div class="detail-item">
+                        <label>Booked</label>
+                        <div class="value">{{ shipment.created_at|date:"M d, Y H:i" }}</div>
+                    </div>
+                    <div class="detail-item">
+                        <label>Est. Delivery</label>
+                        <div class="value">{{ shipment.estimated_delivery|date:"M d, Y" }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Timeline -->
+            <div class="detail-card timeline-card">
+                <h2>Tracking Timeline</h2>
+                {% if status_updates %}
+                    <div class="timeline">
+                        {% for update in status_updates %}
+                            <div class="timeline-item">
+                                <div class="timeline-marker status-{{ update.status }}"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-status">{{ update.get_status_display }}</div>
+                                    <div class="timeline-location">{{ update.location }}</div>
+                                    <div class="timeline-message">{{ update.message }}</div>
+                                    <div class="timeline-time">{{ update.created_at|date:"M d, Y H:i" }}</div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="empty-message">No updates yet. Shipment is being processed.</p>
+                {% endif %}
+            </div>
+        </div>
+    {% elif tracking_number %}
+        <!-- Not Found -->
+        <div class="alert alert-error">
+            <p>❌ No shipment found with tracking number <strong>{{ tracking_number }}</strong></p>
+            <p>Please check the tracking number and try again.</p>
+        </div>
+    {% else %}
+        <!-- Initial State -->
+        <div class="empty-state">
+            <p>Enter a tracking number above to view shipment details and real-time updates.</p>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .tracking-search {
+        margin-bottom: 40px;
+    }
+
+    .tracking-form {
+        display: flex;
+        gap: 10px;
+    }
+
+    .tracking-input {
+        flex: 1;
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .tracking-details {
+        display: grid;
+        gap: 30px;
+    }
+
+    .detail-card {
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 30px;
+    }
+
+    .detail-card h2 {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .detail-item {
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 4px;
+    }
+
+    .detail-item label {
+        display: block;
+        font-weight: 600;
+        color: #666;
+        font-size: 12px;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+    }
+
+    .detail-item .value {
+        font-size: 15px;
+        color: #333;
+    }
+
+    .timeline {
+        position: relative;
+        padding: 20px 0;
+    }
+
+    .timeline-item {
+        display: flex;
+        margin-bottom: 30px;
+    }
+
+    .timeline-marker {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        margin-top: 4px;
+        margin-right: 20px;
+        flex-shrink: 0;
+        border: 3px solid white;
+        box-shadow: 0 0 0 2px #ddd;
+    }
+
+    .timeline-marker.status-booked {
+        background: #ff9800;
+        box-shadow: 0 0 0 2px #ff9800;
+    }
+
+    .timeline-marker.status-in_transit {
+        background: #2196F3;
+        box-shadow: 0 0 0 2px #2196F3;
+    }
+
+    .timeline-marker.status-delivered {
+        background: #4CAF50;
+        box-shadow: 0 0 0 2px #4CAF50;
+    }
+
+    .timeline-item:not(:last-child) .timeline-marker::before {
+        content: '';
+        position: absolute;
+        left: 7px;
+        top: 25px;
+        width: 2px;
+        height: 25px;
+        background: #ddd;
+    }
+
+    .timeline-content {
+        flex: 1;
+    }
+
+    .timeline-status {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 4px;
+    }
+
+    .timeline-location {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 4px;
+    }
+
+    .timeline-message {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 8px;
+    }
+
+    .timeline-time {
+        font-size: 12px;
+        color: #999;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #999;
+    }
+
+    .empty-message {
+        text-align: center;
+        padding: 40px;
+        color: #999;
+    }
+</style>
+{% endblock %}

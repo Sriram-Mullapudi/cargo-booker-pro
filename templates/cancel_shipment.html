@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Cancel Shipment - Cargo Booker Pro{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white dark:bg-slate-900 rounded-xl shadow-lg p-8 border border-slate-200 dark:border-slate-800">
+        <div class="text-center mb-8">
+            <div class="text-6xl mb-4">⚠️</div>
+            <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-4">Cancel Shipment?</h1>
+            <p class="text-slate-600 dark:text-slate-400 text-lg">Are you sure you want to cancel this shipment?</p>
+        </div>
+
+        <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-6 mb-8 border border-slate-200 dark:border-slate-700">
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 font-semibold uppercase">Tracking #</p>
+                    <p class="text-lg font-bold text-slate-900 dark:text-white">{{ shipment.tracking_number }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 font-semibold uppercase">Route</p>
+                    <p class="text-lg font-bold text-slate-900 dark:text-white">{{ shipment.sender_city }} → {{ shipment.receiver_city }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 font-semibold uppercase">Status</p>
+                    <p class="text-lg font-bold"><span class="status-badge status-{{ shipment.status }}">{{ shipment.get_status_display }}</span></p>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 font-semibold uppercase">Amount</p>
+                    <p class="text-lg font-bold text-slate-900 dark:text-white">${{ shipment.total_price|floatformat:2 }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg p-6 mb-8">
+            <p class="text-red-800 dark:text-red-200">
+                <strong>⚠️ Warning:</strong> Once cancelled, this action cannot be undone. Your shipment will be marked as cancelled in the system.
+            </p>
+        </div>
+
+        <form method="post" class="flex gap-4">
+            {% csrf_token %}
+            <button type="submit" class="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
+                Yes, Cancel Shipment
+            </button>
+            <a href="{% url 'shipment_detail' shipment.pk %}" class="flex-1 px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white rounded-lg font-semibold transition-all duration-300 text-center">
+                No, Go Back
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

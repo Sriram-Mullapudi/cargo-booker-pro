@@ -1,0 +1,370 @@
+{% extends 'base.html' %}
+
+{% block title %}Invoice #{{ shipment.tracking_number }} - Cargo Booker Pro{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header print-header">
+        <h1>Invoice / Receipt</h1>
+        <button onclick="window.print()" class="btn btn-primary">🖨️ Print / Save as PDF</button>
+    </div>
+
+    <div class="invoice">
+        <!-- Header -->
+        <div class="invoice-header">
+            <div class="company-info">
+                <h1 class="company-name">📦 Cargo Booker Pro</h1>
+                <p>Fast, Reliable Cargo Shipping</p>
+            </div>
+            <div class="invoice-info">
+                <div class="invoice-row">
+                    <span class="label">Invoice #:</span>
+                    <span class="value">{{ shipment.tracking_number }}</span>
+                </div>
+                <div class="invoice-row">
+                    <span class="label">Date:</span>
+                    <span class="value">{{ shipment.created_at|date:"M d, Y" }}</span>
+                </div>
+                <div class="invoice-row">
+                    <span class="label">Status:</span>
+                    <span class="value"><span class="status-badge status-{{ shipment.status }}">{{ shipment.get_status_display }}</span></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Addresses -->
+        <div class="addresses-section">
+            <div class="address-block">
+                <h3>From (Shipper)</h3>
+                <p><strong>{{ shipment.sender_name }}</strong></p>
+                <p>{{ shipment.sender_address }}</p>
+                <p>{{ shipment.sender_city }}, {{ shipment.sender_postal }}</p>
+                <p>{{ shipment.sender_email }}</p>
+                <p>{{ shipment.sender_phone }}</p>
+            </div>
+
+            <div class="address-block">
+                <h3>To (Receiver)</h3>
+                <p><strong>{{ shipment.receiver_name }}</strong></p>
+                <p>{{ shipment.receiver_address }}</p>
+                <p>{{ shipment.receiver_city }}, {{ shipment.receiver_postal }}</p>
+                <p>{{ shipment.receiver_email }}</p>
+                <p>{{ shipment.receiver_phone }}</p>
+            </div>
+        </div>
+
+        <!-- Cargo Details -->
+        <div class="cargo-details">
+            <h2>Cargo Details</h2>
+            <table class="details-table">
+                <tr>
+                    <td><strong>Cargo Type:</strong></td>
+                    <td>{{ shipment.get_cargo_type_display }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Weight:</strong></td>
+                    <td>{{ shipment.weight_kg }} kg</td>
+                </tr>
+                <tr>
+                    <td><strong>Description:</strong></td>
+                    <td>{{ shipment.cargo_description }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Pricing -->
+        <div class="pricing-section">
+            <h2>Charges</h2>
+            <div class="pricing-table">
+                <div class="pricing-row">
+                    <span>Cargo Type ({{ shipment.get_cargo_type_display }})</span>
+                    <span>${{ shipment.cargo_type_price|floatformat:2 }}/kg</span>
+                    <span>{{ shipment.weight_kg }} kg</span>
+                    <span class="amount">${{ shipment.total_price|floatformat:2 }}</span>
+                </div>
+                <div class="pricing-row total-row">
+                    <span></span>
+                    <span></span>
+                    <span><strong>TOTAL</strong></span>
+                    <span class="amount"><strong>${{ shipment.total_price|floatformat:2 }}</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline-section">
+            <h2>Shipment Timeline</h2>
+            {% if shipment.status_updates.all %}
+                <div class="timeline-table">
+                    {% for update in shipment.status_updates.all %}
+                        <div class="timeline-row">
+                            <div class="timeline-date">{{ update.created_at|date:"M d, Y" }}</div>
+                            <div class="timeline-time">{{ update.created_at|date:"H:i" }}</div>
+                            <div class="timeline-status">{{ update.get_status_display }}</div>
+                            <div class="timeline-location">{{ update.location }}</div>
+                            <div class="timeline-message">{{ update.message }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No status updates yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- Footer -->
+        <div class="invoice-footer">
+            <p>Thank you for using Cargo Booker Pro!</p>
+            <p class="disclaimer">This is an electronic receipt. Keep this for your records.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .print-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .invoice {
+        background: white;
+        padding: 40px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .invoice-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+        border-bottom: 2px solid #ddd;
+    }
+
+    .company-info h1 {
+        margin: 0;
+        font-size: 28px;
+        color: #333;
+    }
+
+    .company-info p {
+        margin: 5px 0 0;
+        color: #666;
+    }
+
+    .invoice-info {
+        text-align: right;
+    }
+
+    .invoice-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+
+    .invoice-row .label {
+        font-weight: 600;
+        color: #666;
+    }
+
+    .invoice-row .value {
+        color: #333;
+    }
+
+    .addresses-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        margin-bottom: 40px;
+    }
+
+    .address-block h3 {
+        margin: 0 0 15px;
+        font-size: 14px;
+        text-transform: uppercase;
+        color: #666;
+        font-weight: 600;
+    }
+
+    .address-block p {
+        margin: 5px 0;
+        font-size: 14px;
+        color: #555;
+        line-height: 1.6;
+    }
+
+    .cargo-details,
+    .pricing-section,
+    .timeline-section {
+        margin-bottom: 40px;
+    }
+
+    .cargo-details h2,
+    .pricing-section h2,
+    .timeline-section h2 {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f0f0f0;
+        font-size: 16px;
+    }
+
+    .details-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .details-table tr {
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .details-table td {
+        padding: 12px 0;
+        font-size: 14px;
+    }
+
+    .details-table td:first-child {
+        color: #666;
+    }
+
+    .pricing-table {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 4px;
+    }
+
+    .pricing-row {
+        display: grid;
+        grid-template-columns: 1fr auto auto auto;
+        gap: 20px;
+        padding: 12px 0;
+        border-bottom: 1px solid #e0e0e0;
+        font-size: 14px;
+    }
+
+    .pricing-row.total-row {
+        border-bottom: none;
+        border-top: 2px solid #e0e0e0;
+        padding-top: 15px;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .pricing-row .amount {
+        text-align: right;
+        font-weight: 600;
+        color: #4CAF50;
+    }
+
+    .timeline-table {
+        background: #f9f9f9;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .timeline-row {
+        display: grid;
+        grid-template-columns: auto auto 1fr 1fr 1fr;
+        gap: 20px;
+        padding: 15px;
+        border-bottom: 1px solid #e0e0e0;
+        font-size: 13px;
+        align-items: center;
+    }
+
+    .timeline-row:last-child {
+        border-bottom: none;
+    }
+
+    .timeline-date {
+        font-weight: 600;
+        color: #333;
+        min-width: 80px;
+    }
+
+    .timeline-time {
+        color: #666;
+        min-width: 50px;
+    }
+
+    .timeline-status {
+        font-weight: 600;
+        color: #4CAF50;
+    }
+
+    .timeline-location,
+    .timeline-message {
+        color: #666;
+    }
+
+    .invoice-footer {
+        text-align: center;
+        padding: 30px 0;
+        border-top: 2px solid #ddd;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .invoice-footer p {
+        margin: 10px 0;
+    }
+
+    .disclaimer {
+        color: #999;
+        font-size: 12px !important;
+    }
+
+    @media print {
+        body {
+            background: white;
+        }
+
+        .print-header {
+            display: none;
+        }
+
+        .invoice {
+            border: none;
+            box-shadow: none;
+            padding: 0;
+        }
+
+        .navbar,
+        .footer {
+            display: none;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .addresses-section {
+            grid-template-columns: 1fr;
+        }
+
+        .invoice {
+            padding: 20px;
+        }
+
+        .invoice-header {
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .invoice-info {
+            text-align: left;
+        }
+
+        .timeline-row {
+            grid-template-columns: 1fr;
+            gap: 5px;
+        }
+
+        .timeline-date {
+            min-width: auto;
+        }
+    }
+</style>
+{% endblock %}

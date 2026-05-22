@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Cargo Booker Pro{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-gradient-to-r from-emerald-50 via-blue-50 to-purple-50 dark:from-emerald-950 dark:via-blue-950 dark:to-purple-950 pt-20 pb-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-5xl sm:text-6xl font-bold text-slate-900 dark:text-white mb-6 animate-fade-in">
+            Ship Your Cargo <span class="text-emerald-600 dark:text-emerald-400">Reliably</span>
+        </h1>
+        <p class="text-xl text-slate-600 dark:text-slate-300 mb-10 max-w-2xl mx-auto animate-fade-in-delay">
+            Fast, secure, and affordable cargo booking and tracking. Track your shipments in real-time with transparent pricing.
+        </p>
+        {% if user.is_authenticated %}
+            <a href="{% url 'book_shipment' %}" class="inline-block px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl animate-bounce-in">
+                📦 Book a Shipment Now
+            </a>
+        {% else %}
+            <a href="{% url 'register' %}" class="inline-block px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl animate-bounce-in">
+                Get Started Free
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="bg-white dark:bg-slate-900 -mt-16 relative z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950 dark:to-emerald-900 rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+                <div class="text-4xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">{{ stats.total_shipments }}</div>
+                <p class="text-slate-600 dark:text-slate-300 font-medium">Shipments Processed</p>
+            </div>
+            <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+                <div class="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">{{ stats.total_delivered }}</div>
+                <p class="text-slate-600 dark:text-slate-300 font-medium">Successfully Delivered</p>
+            </div>
+            <div class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900 rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+                <div class="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-2">{{ stats.total_weight|floatformat:0 }}kg</div>
+                <p class="text-slate-600 dark:text-slate-300 font-medium">Total Weight Shipped</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="py-20 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-4xl font-bold text-center text-slate-900 dark:text-white mb-16">Why Choose Us?</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="group bg-slate-50 dark:bg-slate-900 p-8 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-slate-200 dark:border-slate-800">
+                <div class="text-5xl mb-4 transform group-hover:scale-110 transition-transform duration-300">✓</div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Easy Booking</h3>
+                <p class="text-slate-600 dark:text-slate-400">Simple form to book your cargo in just minutes</p>
+            </div>
+            <div class="group bg-slate-50 dark:bg-slate-900 p-8 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-slate-200 dark:border-slate-800">
+                <div class="text-5xl mb-4 transform group-hover:scale-110 transition-transform duration-300">📍</div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Live Tracking</h3>
+                <p class="text-slate-600 dark:text-slate-400">Real-time updates on your shipment location</p>
+            </div>
+            <div class="group bg-slate-50 dark:bg-slate-900 p-8 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-slate-200 dark:border-slate-800">
+                <div class="text-5xl mb-4 transform group-hover:scale-110 transition-transform duration-300">💰</div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Smart Pricing</h3>
+                <p class="text-slate-600 dark:text-slate-400">Instant price calculation, no hidden fees ever</p>
+            </div>
+            <div class="group bg-slate-50 dark:bg-slate-900 p-8 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-slate-200 dark:border-slate-800">
+                <div class="text-5xl mb-4 transform group-hover:scale-110 transition-transform duration-300">📋</div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Digital Invoices</h3>
+                <p class="text-slate-600 dark:text-slate-400">Print or save as PDF instantly</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Tracking Bar -->
+<section class="py-20 bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-900 border-t border-slate-200 dark:border-slate-800">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-center text-slate-900 dark:text-white mb-8">Track Your Shipment</h2>
+        <form method="get" action="{% url 'index' %}" class="flex gap-3 mb-8">
+            <input 
+                type="text" 
+                name="tracking" 
+                placeholder="Enter tracking number (e.g., CBP1A2B3C4D)" 
+                class="flex-1 px-6 py-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                value="{{ tracking_number }}"
+            >
+            <button type="submit" class="px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">Search</button>
+        </form>
+
+        {% if tracked_shipment %}
+            <div class="bg-white dark:bg-slate-950 rounded-xl p-8 border border-emerald-200 dark:border-emerald-900 shadow-lg animate-slide-in">
+                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">✓ Shipment Found!</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">Tracking #</p>
+                        <p class="text-lg font-bold text-slate-900 dark:text-white">{{ tracked_shipment.tracking_number }}</p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">From</p>
+                        <p class="text-lg font-bold text-slate-900 dark:text-white">{{ tracked_shipment.sender_city }}</p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">To</p>
+                        <p class="text-lg font-bold text-slate-900 dark:text-white">{{ tracked_shipment.receiver_city }}</p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">Status</p>
+                        <p class="text-lg font-bold">
+                            <span class="status-badge status-{{ tracked_shipment.status }}">{{ tracked_shipment.get_status_display }}</span>
+                        </p>
+                    </div>
+                </div>
+                <a href="{% url 'track' %}?tracking={{ tracked_shipment.tracking_number }}" class="inline-block px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold transition-all duration-300">View Full Details →</a>
+            </div>
+        {% elif tracking_number %}
+            <div class="bg-red-50 dark:bg-red-950 rounded-xl p-6 border border-red-200 dark:border-red-900 animate-slide-in">
+                <p class="text-red-800 dark:text-red-200 font-medium">❌ No shipment found with that tracking number. Please check and try again.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Cargo Booker Pro{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Dashboard</h1>
+        <a href="{% url 'book_shipment' %}" class="btn btn-primary">+ New Shipment</a>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Total Shipments</div>
+            <div class="stat-number">{{ stats.total_shipments }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Pending</div>
+            <div class="stat-number" style="color: #ff9800;">{{ stats.pending }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">In Transit</div>
+            <div class="stat-number" style="color: #2196F3;">{{ stats.in_transit }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Delivered</div>
+            <div class="stat-number" style="color: #4CAF50;">{{ stats.delivered }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Spent</div>
+            <div class="stat-number">${{ stats.total_spent|floatformat:2 }}</div>
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="filter-tabs">
+        <a href="{% url 'dashboard' %}" class="filter-tab {% if not status_filter %}active{% endif %}">All</a>
+        <a href="?status=pending" class="filter-tab {% if status_filter == 'pending' %}active{% endif %}">Pending</a>
+        <a href="?status=booked" class="filter-tab {% if status_filter == 'booked' %}active{% endif %}">Booked</a>
+        <a href="?status=in_transit" class="filter-tab {% if status_filter == 'in_transit' %}active{% endif %}">In Transit</a>
+        <a href="?status=delivered" class="filter-tab {% if status_filter == 'delivered' %}active{% endif %}">Delivered</a>
+    </div>
+
+    <!-- Shipments Table -->
+    <div class="table-container">
+        {% if shipments %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tracking #</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Status</th>
+                        <th>Weight</th>
+                        <th>Price</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for shipment in shipments %}
+                        <tr>
+                            <td><strong>{{ shipment.tracking_number }}</strong></td>
+                            <td>{{ shipment.sender_city }}</td>
+                            <td>{{ shipment.receiver_city }}</td>
+                            <td><span class="status-badge status-{{ shipment.status }}">{{ shipment.get_status_display }}</span></td>
+                            <td>{{ shipment.weight_kg }} kg</td>
+                            <td>${{ shipment.total_price|floatformat:2 }}</td>
+                            <td>{{ shipment.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                <a href="{% url 'shipment_detail' shipment.pk %}" class="btn-small">View</a>
+                                <a href="{% url 'invoice' shipment.pk %}" class="btn-small">Invoice</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-state">
+                <p>No shipments found.</p>
+                <a href="{% url 'book_shipment' %}" class="btn btn-primary">Book Your First Shipment</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .filter-tabs {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .filter-tab {
+        padding: 10px 0;
+        color: #666;
+        text-decoration: none;
+        border-bottom: 3px solid transparent;
+        cursor: pointer;
+    }
+
+    .filter-tab.active {
+        color: #4CAF50;
+        border-bottom-color: #4CAF50;
+    }
+
+    .filter-tab:hover {
+        color: #333;
+    }
+
+    .table-container {
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table thead {
+        background: #f5f5f5;
+    }
+
+    .table th {
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 2px solid #e0e0e0;
+    }
+
+    .table td {
+        padding: 15px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .btn-small {
+        display: inline-block;
+        padding: 6px 12px;
+        margin-right: 8px;
+        font-size: 12px;
+        background: #f0f0f0;
+        color: #333;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background 0.2s;
+    }
+
+    .btn-small:hover {
+        background: #e0e0e0;
+    }
+
+    .empty-state {
+        padding: 40px;
+        text-align: center;
+        color: #999;
+    }
+</style>
+{% endblock %}

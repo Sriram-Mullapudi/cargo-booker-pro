@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}Create Account — Cargo Booker Pro{% endblock %}
+
+{% block content %}
+<div style="min-height:80vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem;">
+  <div style="width:100%;max-width:480px;">
+
+    <div style="text-align:center;margin-bottom:2rem;">
+      <div style="font-size:2.5rem;margin-bottom:.5rem;">📦</div>
+      <h1 style="font-size:1.6rem;font-weight:700;color:#18181b;margin-bottom:.25rem;">Create your account</h1>
+      <p style="color:#71717a;font-size:.95rem;">Start booking shipments in minutes. It's free.</p>
+    </div>
+
+    <div style="background:#fff;border:1px solid #e4e4e7;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.06);padding:2rem;">
+
+      {% if messages %}
+        <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:.75rem 1rem;margin-bottom:1.25rem;">
+          {% for message in messages %}
+            <p style="color:#dc2626;font-size:.85rem;margin:0;">{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% if form.errors %}
+  <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;
+              padding:.85rem 1rem;margin-bottom:1rem;">
+    <p style="font-weight:700;color:#dc2626;font-size:.85rem;margin:0 0 .5rem;">
+      Please fix the following:
+    </p>
+    {% for field, errors in form.errors.items %}
+      {% for error in errors %}
+        <p style="color:#dc2626;font-size:.82rem;margin:.15rem 0;">
+          ▸ <strong>{{ field }}</strong>: {{ error }}
+        </p>
+      {% endfor %}
+    {% endfor %}
+  </div>
+{% endif %}
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+          <div>
+            <label style="display:block;font-size:.8rem;font-weight:600;color:#52525b;margin-bottom:.35rem;">First Name</label>
+            <input type="text" name="first_name" value="{{ form.first_name.value|default:'' }}" placeholder="John"
+                   style="width:100%;padding:.6rem .85rem;border:1.5px solid #e4e4e7;border-radius:8px;font-size:.9rem;color:#18181b;background:#fff;outline:none;"
+                   onfocus="this.style.borderColor='#18181b'" onblur="this.style.borderColor='#e4e4e7'">
+            {% for e in form.first_name.errors %}<p style="color:#ef4444;font-size:.75rem;margin-top:.25rem;">{{ e }}</p>{% endfor %}
+          </div>
+          <div>
+            <label style="display:block;font-size:.8rem;font-weight:600;color:#52525b;margin-bottom:.35rem;">Last Name</label>
+            <input type="text" name="last_name" value="{{ form.last_name.value|default:'' }}" placeholder="Doe"
+                   style="width:100%;padding:.6rem .85rem;border:1.5px solid #e4e4e7;border-radius:8px;font-size:.9rem;color:#18181b;background:#fff;outline:none;"
+                   onfocus="this.style.borderColor='#18181b'" onblur="this.style.borderColor='#e4e4e7'">
+            {% for e in form.last_name.errors %}<p style="color:#ef4444;font-size:.75rem;margin-top:.25rem;">{{ e }}</p>{% endfor %}
+          </div>
+        </div>
+
+        <div style="margin-bottom:1rem;">
+          <label style="display:block;font-size:.8rem;font-weight:600;color:#52525b;margin-bottom:.35rem;">Username</label>
+          <input type="text" name="username" value="{{ form.username.value|default:'' }}" placeholder="johndoe"
+                 style="width:100%;padding:.6rem .85rem;border:1.5px solid #e4e4e7;border-radius:8px;font-size:.9rem;color:#18181b;background:#fff;outline:none;"
+                 onfocus="this.style.borderColor='#18181b'" onblur="this.style.borderColor='#e4e4e7'">
+          {% for e in form.username.errors %}<p style="color:#ef4444;font-size:.75rem;margin-top:.25rem;">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div style="margin-bottom:1rem;">
+          <label style="display:block;font-size:.8rem;font-weight:600;color:#52525b;margin-bottom:.35rem;">Email Address</label>
+          <input type="email" name="email" value="{{ form.email.value|default:'' }}" placeholder="john@example.com"
+                 style="width:100%;padding:.6rem .85rem;border:1.5px solid #e4e4e7;border-radius:8px;font-size:.9rem;color:#18181b;background:#fff;outline:none;"
+                 onfocus="this.style.borderColor='#18181b'" onblur="this.style.borderColor='#e4e4e7'">
+          {% for e in form.email.errors %}<p style="color:#ef4444;font-size:.75rem;margin-top:.25rem;">{{ e }}</p>{% endfor %}
+        </div>
+
+        <!-- ✅ FIXED: name="password" and name="password_confirm" -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
+          <div>
+            <label style="display:block;font-size:.8rem;font-weight:600;color:#52525b;margin-bottom:.35rem;">Password</label>
+            <input type="password" name="password" placeholder="••••••••"
+                   style="width:100%;padding:.6rem .85rem;border:1.5px solid #e4e4e7;border-radius:8px;font-size:.9rem;color:#18181b;background:#fff;outline:none;"
+                   onfocus="this.style.borderColor='#18181b'" onblur="this.style.borderColor='#e4e4e7'">
+            {% for e in form.password.errors %}<p style="color:#ef4444;font-size:.75rem;margin-top:.25rem;">{{ e }}</p>{% endfor %}
+          </div>
+          <div>
+            <label style="display:block;font-size:.8rem;font-weight:600;color:#52525b;margin-bottom:.35rem;">Confirm Password</label>
+            <input type="password" name="password_confirm" placeholder="••••••••"
+                   style="width:100%;padding:.6rem .85rem;border:1.5px solid #e4e4e7;border-radius:8px;font-size:.9rem;color:#18181b;background:#fff;outline:none;"
+                   onfocus="this.style.borderColor='#18181b'" onblur="this.style.borderColor='#e4e4e7'">
+            {% for e in form.password_confirm.errors %}<p style="color:#ef4444;font-size:.75rem;margin-top:.25rem;">{{ e }}</p>{% endfor %}
+          </div>
+        </div>
+
+        {% if form.non_field_errors %}
+          <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;">
+            {% for e in form.non_field_errors %}<p style="color:#dc2626;font-size:.85rem;margin:0;">{{ e }}</p>{% endfor %}
+          </div>
+        {% endif %}
+
+        <button type="submit"
+                style="width:100%;padding:.75rem;background:#18181b;color:#fff;border:none;border-radius:8px;font-size:.95rem;font-weight:600;cursor:pointer;"
+                onmouseover="this.style.background='#3f3f46'" onmouseout="this.style.background='#18181b'">
+          Create Account →
+        </button>
+      </form>
+    </div>
+
+    <p style="text-align:center;margin-top:1.25rem;font-size:.9rem;color:#71717a;">
+      Already have an account?
+      <a href="{% url 'login' %}" style="color:#18181b;font-weight:600;text-decoration:none;">Sign in</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
